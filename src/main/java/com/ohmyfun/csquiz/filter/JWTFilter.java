@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+//OncePerRequestFilter : http 요청한 1번만 실행되는 filter
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;

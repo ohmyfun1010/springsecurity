@@ -17,6 +17,14 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+//1.SecurityFilterChain 설정: 로그인 요청이 들어오면 LoginFilter 또는 UsernamePasswordAuthenticationFilter가 호출됩니다.
+//2.attemptAuthentication(): 사용자의 아이디와 비밀번호를 받아 UsernamePasswordAuthenticationToken 객체에 담습니다.
+//3.authenticationManager.authenticate(): 인증 요청을 처리하기 위해 authenticationManager의 authenticate() 메서드를 호출합니다.
+//4.UserDetailsService.loadUserByUsername(): DaoAuthenticationProvider가 사용자 정보를 조회하기 위해 UserDetailsService의 loadUserByUsername() 메서드를 호출합니다.
+//5.비밀번호 검증: DaoAuthenticationProvider가 조회한 사용자 정보와 입력된 비밀번호를 비교합니다.
+//6.인증된 Authentication 객체 생성: 비밀번호 검증이 성공하면 DaoAuthenticationProvider가 인증된 Authentication 객체를 생성합니다.
+//7.SecurityContext에 저장: SecurityContextHolder.getContext().setAuthentication(authentication)를 통해 인증 정보를 SecurityContext에 저장합니다.
+//8.ThreadLocal 사용: SecurityContext는 ThreadLocal을 사용하여 현재 스레드에 저장되어, 같은 스레드 내에서 인증 정보를 쉽게 접근할 수 있게 합니다.
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -26,8 +34,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
 
         this.authenticationManager = authenticationManager;
-        setFilterProcessesUrl("/api/login"); // 로그인 경로 변경
         this.jwtUtil = jwtUtil;
+        setFilterProcessesUrl("/api/login"); // 로그인 경로 변경
+
     }
 
     @Override

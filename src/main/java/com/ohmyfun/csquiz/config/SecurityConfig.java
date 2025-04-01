@@ -49,7 +49,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
         http
                 .csrf((auth) -> auth.disable());
 
@@ -64,18 +63,20 @@ public class SecurityConfig {
                         .requestMatchers("/api/login", "/api/join").permitAll()
                         .anyRequest().authenticated());
 
+        //permitAll 으로 설정되지 않은 요청이 들어오면 JWTFilter 가 가장 먼저 실행됨
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
-        //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+        //login api 호출 시 LoginFilter 가 실행됨
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
+        //Spring Security가 세션을 사용하지 않도록 설정 -> Spring Security가 HTTP 요청마다 새로운 인증 정보를 확인하도록 강제
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-
+        //cors 설정
         http
                 .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
